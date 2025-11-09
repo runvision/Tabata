@@ -1,0 +1,97 @@
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --accent:#06b6d4;
+  --muted:#9ca3af;
+  --glass:rgba(255,255,255,0.03);
+  --radius:14px;
+  --sans: Inter, system-ui;
+}
+
+body{
+  margin:0;
+  padding:20px;
+  font-family:var(--sans);
+  background:linear-gradient(180deg,#071022,#051328);
+  color:white;
+}
+
+.app{
+  max-width:1100px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:420px 1fr;
+  gap:20px;
+}
+
+.panel{
+  background:var(--card);
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+label{ display:block; font-size:13px; color:var(--muted); margin-bottom:4px; }
+input,select{
+  width:100%; padding:10px; background:var(--glass);
+  border:1px solid rgba(255,255,255,0.05); border-radius:10px;
+  color:white;
+}
+.row{display:flex; gap:10px;}
+.btn{
+  border:0; cursor:pointer; padding:10px 12px;
+  border-radius:10px; background:var(--accent); color:#042a2f;
+  font-weight:600;
+}
+.btn.ghost{
+  background:transparent;
+  border:1px solid var(--muted);
+  color:var(--muted);
+}
+
+.exercises{
+  max-height:160px; overflow:auto; display:flex; flex-direction:column; gap:6px;
+}
+.exercise-item{
+  background:var(--glass); padding:8px; border-radius:10px;
+  display:flex; gap:8px; align-items:center;
+}
+
+.timer-wrap{ display:flex; flex-direction:column; gap:20px; }
+.header-right{ display:flex; justify-content:space-between; }
+.mini-info{ font-size:13px; color:var(--muted); }
+
+.ring{
+  width:300px; height:300px; border-radius:50%;
+  background:conic-gradient(var(--accent) 0deg, var(--glass) 0deg);
+  margin:auto; display:flex; align-items:center; justify-content:center;
+}
+.time{ font-size:52px; font-weight:700; }
+.phase{ font-size:16px; color:var(--muted); }
+.exercise-label{ margin-top:12px; font-size:14px; }
+
+.progress{
+  margin-top:10px; height:8px; background:var(--glass);
+  border-radius:999px; overflow:hidden;
+}
+.bar{
+  height:100%; width:0%;
+  background:linear-gradient(90deg,var(--accent),#4ecdf9);
+}
+
+.round-info{
+  margin-top:10px; display:flex; justify-content:space-between;
+  color:var(--muted);
+}
+
+.quick-buttons{
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
+}
+
+/* ✅ Responsividade mobile */
+@media(max-width:900px){
+  .app{ grid-template-columns:1fr; }
+  .ring{ width:240px;height:240px; }
+  .time{ font-size:36px; }
+  body{ padding:10px; }
+}
