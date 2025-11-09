@@ -43,8 +43,6 @@ let state = {
 };
 
 // ---- AUDIO / VOZ ----
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-const audioCtx = AudioCtx ? new AudioCtx() : null;
 
 function beep(freq=880, dur=0.06, vol=0.2){
   if(!state.sound || !audioCtx) return;
