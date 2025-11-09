@@ -1,588 +1,121 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>RunVision Tabata — Simple</title>
-    <style>
-        :root{
-            --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#9ca3af; --glass: rgba(255,255,255,0.04);
-            --success:#10b981; --danger:#ef4444; --glass-2: rgba(255,255,255,0.02);
-            --radius:14px; --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-        }
-        *{box-sizing:border-box}
-        html,body{height:100%}
-        body{
-            margin:0; font-family:var(--sans),serif; background:linear-gradient(180deg,#071022 0%, #051328 100%); color:#e6eef6; -webkit-font-smoothing:antialiased;
-            padding:28px; display:flex; align-items:center; justify-content:center;
-        }
-
-        .app{
-            width:100%; max-width:1100px; display:grid; grid-template-columns:420px 1fr; gap:24px;
-        }
-
-        .panel{background:linear-gradient(180deg,var(--card), rgba(6,8,15,0.7)); border-radius:var(--radius); padding:18px; box-shadow: 0 6px 30px rgba(2,6,23,0.6);}
-
-        header h1{margin:0;font-size:18px;letter-spacing:0.2px}
-        header p{margin:6px 0 0;color:var(--muted);font-size:13px}
-
-        /* Left column controls */
-        .controls{display:flex; flex-direction:column; gap:12px}
-        label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
-        input[type=number], input[type=text], select{width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:var(--glass); color:inherit}
-        .row{display:flex; gap:10px}
-        .row > *{flex:1}
-
-        .exercises{display:flex; flex-direction:column; gap:8px; max-height:220px; overflow:auto; padding-right:6px}
-
-        .exercise-item input{flex:1; border:0; background:transparent; color:inherit}
-        .btn{display:inline-block; padding:10px 12px; border-radius:10px; cursor:pointer; background:var(--accent); color:#042a2f; font-weight:600; border:0}
-        .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted)}
-
-        .actions{display:flex; gap:8px; justify-content:space-between; align-items:center}
-
-        /* Right column: timer and UI */
-        .timer-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; height:100%}
-        .ring{width:320px; height:320px; border-radius:999px; display:grid; place-items:center; background: conic-gradient(var(--accent) 0deg, rgba(255,255,255,0.02) 0deg);}
-        .ring .info{display:flex; flex-direction:column; align-items:center}
-        .time{font-size:54px; font-weight:700}
-        .phase{font-size:16px; color:var(--muted); margin-top:6px}
-        .progress{width:100%; height:8px; background:rgba(255,255,255,0.03); border-radius:999px; overflow:hidden}
-        .bar{height:100%; width:0; background:linear-gradient(90deg, var(--accent), #60a5fa)}
-
-        .controls-footer{display:flex; gap:8px}
-
-        /* presets & storage */
-        .presets{display:flex; gap:8px; flex-wrap:wrap}
-
-        footer{margin-top:12px; color:var(--muted); font-size:13px}
-
-        /* responsive */
-        @media (max-width:980px){
-            .app{grid-template-columns:1fr;}
-            .ring{width:260px;height:260px}
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RunVision Tabata</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div class="app">
+  <div class="app">
+
+    <!-- PAINEL ESQUERDO -->
     <div class="panel">
-        <header>
-            <h1>RunVision Tabata — Criador</h1>
-            <p>Construa protocolos Tabata e Tabata-like para treinos rápidos em casa (sem equipamento).</p>
-        </header>
+      <header>
+        <h1>RunVision Tabata — Criador</h1>
+        <p>Monte seu protocolo Tabata e treine em casa sem equipamentos.</p>
+      </header>
 
-        <div class="controls" style="margin-top:12px">
-            <div>
-                <label>Nome do protocolo</label>
-                <label for="protocolName"></label><input id="protocolName" type="text" placeholder="Ex: Tabata 4 min - Full Body" value="Tabata 4 min - Full Body">
-            </div>
+      <div class="controls">
 
-            <div class="row">
-                <div>
-                    <label>Tempo de trabalho (seg)</label>
-                    <label for="workTime"></label><input id="workTime" type="number" min="5" value="20">
-                </div>
-                <div>
-                    <label>Tempo de descanso (seg)</label>
-                    <label for="restTime"></label><input id="restTime" type="number" min="5" value="10">
-                </div>
-            </div>
-
-            <div class="row">
-                <div>
-                    <label>Rounds (repetições)</label>
-                    <label for="rounds"></label><input id="rounds" type="number" min="1" value="8">
-                </div>
-                <div>
-                    <label>Preparo (seg)</label>
-                    <label for="prepare"></label><input id="prepare" type="number" min="0" value="5">
-                </div>
-            </div>
-
-            <div>
-                <label>Exercícios (um por linha)</label>
-                <div class="exercises" id="exercisesList">
-                    <!-- dynamically added -->
-                </div>
-                <div style="display:flex; gap:8px; margin-top:8px">
-                    <label for="newExercise"></label><input id="newExercise" type="text" placeholder="Ex: Burpee" />
-                    <button class="btn" id="addExerciseBtn">Adicionar</button>
-                </div>
-            </div>
-
-            <div class="actions">
-                <div style="display:flex; gap:8px">
-                    <button class="btn" id="savePreset">Salvar Preset</button>
-                    <button class="btn ghost" id="loadDefault">Carregar Default</button>
-                </div>
-
-                <div style="display:flex; gap:8px">
-                    <button class="btn ghost" id="exportBtn">Exportar</button>
-                    <button class="btn ghost" id="importBtn">Importar</button>
-                    <input id="fileInput" type="file" accept="application/json" style="display:none" />
-                </div>
-            </div>
-
-            <div style="margin-top:10px">
-                <label>Presets salvos</label>
-                <div class="presets" id="presetsContainer"></div>
-            </div>
-
-            <footer>
-                <div style="display:flex; justify-content:space-between; align-items:center">
-                    <small>LocalStorage usado para salvar presets no navegador.</small>
-                    <small id="version">v1.0</small>
-                </div>
-            </footer>
+        <div>
+          <label>Nome do protocolo</label>
+          <input id="protocolName" type="text" value="Tabata 4 min - Full Body">
         </div>
+
+        <div class="row">
+          <div>
+            <label>Tempo de trabalho (seg)</label>
+            <input id="workTime" type="number" value="20" min="5">
+          </div>
+          <div>
+            <label>Descanso (seg)</label>
+            <input id="restTime" type="number" value="10" min="5">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Rounds</label>
+            <input id="rounds" type="number" value="8" min="1">
+          </div>
+          <div>
+            <label>Prepare (seg)</label>
+            <input id="prepare" type="number" value="5" min="0">
+          </div>
+        </div>
+
+        <div>
+          <label>Exercícios (um por linha)</label>
+          <div class="exercises" id="exercisesList"></div>
+
+          <div class="add-row">
+            <input id="newExercise" type="text" placeholder="Ex: Burpee">
+            <button id="addExerciseBtn" class="btn">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="savePreset" class="btn">Salvar Preset</button>
+          <button id="loadDefault" class="btn ghost">Carregar Default</button>
+
+          <button id="exportBtn" class="btn ghost">Exportar</button>
+          <button id="importBtn" class="btn ghost">Importar</button>
+          <input id="fileInput" type="file" accept="application/json" hidden>
+        </div>
+
+        <div>
+          <label>Presets</label>
+          <div id="presetsContainer" class="presets"></div>
+        </div>
+      </div>
     </div>
 
+    <!-- PAINEL DIREITO -->
     <div class="panel timer-wrap">
-        <div style="width:100%; display:flex; justify-content:space-between; align-items:center">
-            <div>
-                <strong id="displayName">Tabata 4 min - Full Body</strong>
-                <div style="color:var(--muted); font-size:13px">Rounds: <span id="displayRounds">8</span> • Work: <span id="displayWork">20s</span> • Rest: <span id="displayRest">10s</span></div>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center">
-                <button class="btn ghost" id="startPause">Start</button>
-                <button class="btn" id="resetBtn">Reset</button>
-            </div>
+      <div class="header-right">
+        <div>
+          <strong id="displayName">Tabata 4 min - Full Body</strong>
+          <div class="mini-info">
+            Rounds: <span id="displayRounds">8</span> •
+            Work: <span id="displayWork">20s</span> •
+            Rest: <span id="displayRest">10s</span>
+          </div>
         </div>
 
-        <div class="ring" id="ring">
-            <div class="info">
-                <div class="time" id="timeLeft">0:20</div>
-                <div class="phase" id="phaseLabel">PREPARE</div>
-                <div style="margin-top:12px; color:var(--muted); font-size:13px">Exercício: <span id="currentExercise">-</span></div>
-            </div>
+        <div class="controls-footer">
+          <button id="startPause" class="btn ghost">Start</button>
+          <button id="resetBtn" class="btn">Reset</button>
         </div>
+      </div>
 
-        <div style="width:100%; margin-top:8px">
-            <div class="progress"><div class="bar" id="progressBar"></div></div>
-            <div style="display:flex; justify-content:space-between; margin-top:8px; color:var(--muted)">
-                <div>Round <span id="curRound">0</span>/<span id="totalRound">8</span></div>
-                <div id="totalTimeLeft">Total: 0:00</div>
-            </div>
-
-            <div class="controls-footer" style="margin-top:12px">
-                <button class="btn" id="quickTabata">Preset Tabata</button>
-                <button class="btn ghost" id="quickTabataShort">Tabata curto</button>
-                <button class="btn ghost" id="soundToggle">Som: ON</button>
-            </div>
-
-            <div style="margin-top:12px; color:var(--muted); font-size:13px">Dica: adicione 4–8 exercícios e o app alternará os nomes durante cada round para orientar o atleta.</div>
+      <div class="ring" id="ring">
+        <div class="info">
+          <div class="time" id="timeLeft">0:20</div>
+          <div class="phase" id="phaseLabel">PREPARE</div>
+          <div class="exercise-label">Exercício: <span id="currentExercise">-</span></div>
         </div>
+      </div>
 
+      <div class="progress">
+        <div class="bar" id="progressBar"></div>
+      </div>
+
+      <div class="round-info">
+        <div>Round <span id="curRound">0</span>/<span id="totalRound">8</span></div>
+        <div id="totalTimeLeft">Total: 0:00</div>
+      </div>
+
+      <div class="quick-buttons">
+        <button id="quickTabata" class="btn">Tabata Clássico</button>
+        <button id="quickTabataShort" class="btn ghost">Tabata Curto</button>
+        <button id="soundToggle" class="btn ghost">Som: ON</button>
+      </div>
     </div>
-</div>
 
-<script>
-    // Utility helpers
-    const $ = (q) => document.querySelector(q)
-    const $all = (q) => Array.from(document.querySelectorAll(q))
+  </div>
 
-    // Elements
-    const protocolName = $('#protocolName')
-    const workTime = $('#workTime')
-    const restTime = $('#restTime')
-    const rounds = $('#rounds')
-    const prepare = $('#prepare')
-    const exercisesList = $('#exercisesList')
-    const newExercise = $('#newExercise')
-    const addExerciseBtn = $('#addExerciseBtn')
-    const presetsContainer = $('#presetsContainer')
-    const savePresetBtn = $('#savePreset')
-    const loadDefaultBtn = $('#loadDefault')
-    const exportBtn = $('#exportBtn')
-    const importBtn = $('#importBtn')
-    const fileInput = $('#fileInput')
-
-    const startPauseBtn = $('#startPause')
-    const resetBtn = $('#resetBtn')
-    const timeLeft = $('#timeLeft')
-    const phaseLabel = $('#phaseLabel')
-    const ring = $('#ring')
-    const bar = $('#progressBar')
-    const displayName = $('#displayName')
-    const currentExerciseLabel = $('#currentExercise')
-    const curRound = $('#curRound')
-    const totalRound = $('#totalRound')
-    const displayRounds = $('#displayRounds')
-    const displayWork = $('#displayWork')
-    const displayRest = $('#displayRest')
-    const totalTimeLeft = $('#totalTimeLeft')
-    const quickTabata = $('#quickTabata')
-    const quickTabataShort = $('#quickTabataShort')
-    const soundToggle = $('#soundToggle')
-
-    // State
-    let state = {
-        name: protocolName.value,
-        work: parseInt(workTime.value,10),
-        rest: parseInt(restTime.value,10),
-        rounds: parseInt(rounds.value,10),
-        prepare: parseInt(prepare.value,10),
-        exercises: ['Burpee','Agachamento','Alpinista','Prancha'],
-        running:false,
-        timer:null,
-        phase:'prepare', // prepare | work | rest | finished
-        timeLeft:0,
-        curRound:0,
-        currentIdx:0,
-        sound:true
-    }
-
-    // Audio using WebAudio for short beeps
-    const AudioCtx = window.AudioContext || window.webkitAudioContext
-    const audioCtx = AudioCtx ? new AudioCtx() : null
-    function beep(freq=880, dur=0.06, vol=0.2){
-        if(!audioCtx || !state.sound) return
-        const o = audioCtx.createOscillator()
-        const g = audioCtx.createGain()
-        o.frequency.value = freq
-        o.type = 'sine'
-        g.gain.value = vol
-        o.connect(g); g.connect(audioCtx.destination)
-        o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur)
-        setTimeout(()=>o.stop(), dur*1000 + 20)
-    }
-
-    // --- UI helpers ---
-    function renderExercises(){
-        exercisesList.innerHTML = ''
-        state.exercises.forEach((ex,i)=>{
-            const div = document.createElement('div')
-            div.className = 'exercise-item'
-            div.innerHTML = `<input value="${ex}" data-i="${i}"/><button class='btn ghost' data-del='${i}'>Rem</button>`
-            exercisesList.appendChild(div)
-        })
-    }
-
-    function syncFromInputs(){
-        state.name = protocolName.value || 'Tabata'
-        state.work = parseInt(workTime.value,10) || 20
-        state.rest = parseInt(restTime.value,10) || 10
-        state.rounds = parseInt(rounds.value,10) || 8
-        state.prepare = parseInt(prepare.value,10) || 5
-    }
-
-    function syncToDisplay(){
-        displayName.textContent = state.name
-        displayRounds.textContent = state.rounds
-        displayWork.textContent = state.work + 's'
-        displayRest.textContent = state.rest + 's'
-        totalRound.textContent = state.rounds
-        // total time estimate
-        const totalSecs = state.prepare + state.rounds*(state.work + state.rest)
-        totalTimeLeft.textContent = 'Total: ' + formatTime(totalSecs)
-    }
-
-    function formatTime(s){
-        const mm = Math.floor(s/60)
-        const ss = s%60
-        return `${mm}:${ss.toString().padStart(2,'0')}`
-    }
-
-    // presets saved in localStorage
-    function loadPresets(){
-        const raw = localStorage.getItem('rv_tabata_presets')
-        if(!raw) return []
-        try{ return JSON.parse(raw) }catch(e){ return [] }
-    }
-    function savePresets(arr){ localStorage.setItem('rv_tabata_presets', JSON.stringify(arr)) }
-
-    function renderPresets(){
-        const arr = loadPresets()
-        presetsContainer.innerHTML = ''
-        arr.forEach((p,idx)=>{
-            const el = document.createElement('div')
-            el.className='chip'
-            el.textContent = p.name
-            el.onclick = ()=>loadPreset(idx)
-            presetsContainer.appendChild(el)
-        })
-    }
-
-    function loadPreset(i){
-        const arr = loadPresets()
-        if(!arr[i]) return
-        const p = arr[i]
-        protocolName.value = p.name
-        workTime.value = p.work
-        restTime.value = p.rest
-        rounds.value = p.rounds
-        prepare.value = p.prepare
-        state.exercises = p.exercises || []
-        syncFromInputs(); syncToDisplay(); renderExercises()
-    }
-
-    // default
-    function loadDefault(){
-        protocolName.value = 'Tabata 4 min - Full Body'
-        workTime.value = 20
-        restTime.value = 10
-        rounds.value = 8
-        prepare.value = 5
-        state.exercises = ['Burpee','Agachamento','Alpinista','Prancha']
-        syncFromInputs(); syncToDisplay(); renderExercises()
-    }
-
-    // export / import
-    function exportPreset(){
-        const data = {
-            name: state.name,
-            work: state.work,
-            rest: state.rest,
-            rounds: state.rounds,
-            prepare: state.prepare,
-            exercises: state.exercises
-        }
-        const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'})
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url; a.download = (state.name||'tabata') + '.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
-    }
-
-    function importFile(file){
-        const reader = new FileReader()
-        reader.onload = ()=>{
-            try{
-                const data = JSON.parse(reader.result)
-                protocolName.value = data.name || protocolName.value
-                workTime.value = data.work || workTime.value
-                restTime.value = data.rest || restTime.value
-                rounds.value = data.rounds || rounds.value
-                prepare.value = data.prepare || prepare.value
-                state.exercises = data.exercises || state.exercises
-                syncFromInputs(); syncToDisplay(); renderExercises()
-            }catch(e){ alert('Arquivo inválido') }
-        }
-        reader.readAsText(file)
-    }
-
-    // Save preset to storage
-    function savePreset(){
-        const arr = loadPresets()
-        const p = {
-            name: state.name,
-            work: state.work,
-            rest: state.rest,
-            rounds: state.rounds,
-            prepare: state.prepare,
-            exercises: state.exercises
-        }
-        arr.push(p)
-        savePresets(arr)
-        renderPresets()
-    }
-
-    // --- Timer logic ---
-    function start(){
-        if(state.running) return
-        // ensure audio context resumed on user gesture
-        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume()
-        state.running = true
-        startPauseBtn.textContent = 'Pause'
-        if(state.phase === 'finished') reset(true)
-        if(state.phase === 'prepare'){
-            state.timeLeft = state.prepare
-        } else if(!state.timeLeft){
-            // starting new session
-            state.curRound = 1
-            state.currentIdx = 0
-            state.phase = state.prepare>0 ? 'prepare' : 'work'
-            state.timeLeft = state.phase === 'prepare' ? state.prepare : state.work
-        }
-        tick()
-        state.timer = setInterval(tick, 250)
-    }
-
-    function pause(){
-        state.running = false
-        startPauseBtn.textContent = 'Start'
-        clearInterval(state.timer)
-    }
-
-    function reset(startImmediately=false){
-        clearInterval(state.timer)
-        state.running = false
-        state.phase = state.prepare>0 ? 'prepare' : 'work'
-        state.timeLeft = state.phase === 'prepare' ? state.prepare : state.work
-        state.curRound = 0
-        state.currentIdx = 0
-        updateUI()
-        startPauseBtn.textContent = 'Start'
-        if(startImmediately) start()
-    }
-
-    function tick(){
-        // tick called every 250ms
-        if(!state.running) return
-        // decrement by 0.25s
-        state.timeLeft = Math.max(0, +(state.timeLeft - 0.25).toFixed(2))
-        const totalPhase = (state.phase === 'work') ? state.work : (state.phase === 'rest' ? state.rest : state.prepare)
-        const passed = totalPhase - state.timeLeft
-        const pct = Math.min(1, Math.max(0, passed / totalPhase))
-        updateRing(pct)
-        if(state.timeLeft <= 0){
-            // phase change
-            if(state.phase === 'prepare'){
-                state.phase = 'work'
-                state.curRound = 1
-                state.timeLeft = state.work
-                state.currentIdx = 0
-                beep(1000,0.08,0.25)
-            } else if(state.phase === 'work'){
-                // just finished work
-                // give short beep
-                beep(700,0.06,0.22)
-                state.phase = 'rest'
-                state.timeLeft = state.rest
-            } else if(state.phase === 'rest'){
-                // finished rest -> next round or finish
-                if(state.curRound >= state.rounds){
-                    state.phase = 'finished'
-                    state.timeLeft = 0
-                    state.running = false
-                    clearInterval(state.timer)
-                    beep(1200,0.18,0.3)
-                } else {
-                    state.curRound += 1
-                    state.phase = 'work'
-                    state.timeLeft = state.work
-                    state.currentIdx = (state.currentIdx + 1) % Math.max(1, state.exercises.length)
-                    beep(1000,0.08,0.25)
-                }
-            }
-        }
-        updateUI()
-    }
-
-    function updateRing(pct){
-        const deg = pct * 360
-        ring.style.background = `conic-gradient(var(--accent) ${deg}deg, rgba(255,255,255,0.02) ${deg}deg)`
-        bar.style.width = (pct*100) + '%'
-    }
-
-    function updateUI(){
-        // show time for current phase
-        let t = Math.ceil(state.timeLeft)
-        if(state.phase === 'finished'){ t = 0 }
-        timeLeft.textContent = formatTime(t)
-        phaseLabel.textContent = state.phase.toUpperCase()
-        currentExerciseLabel.textContent = state.exercises.length ? state.exercises[state.currentIdx] : '-'
-        curRound.textContent = state.curRound
-        // display total time left dynamic estimate
-        if(state.phase === 'finished') totalTimeLeft.textContent = 'Concluído'
-        syncToDisplay()
-    }
-
-    // Quick presets
-    quickTabata.addEventListener('click', ()=>{
-        protocolName.value = 'Tabata Clássico'
-        workTime.value = 20; restTime.value = 10; rounds.value = 8; prepare.value = 5
-        state.exercises = ['Burpee','Agachamento','Corrida Estacionária','Alpinista']
-        syncFromInputs(); syncToDisplay(); renderExercises()
-    })
-    quickTabataShort.addEventListener('click', ()=>{
-        protocolName.value = 'Tabata 2 min - Rápido'
-        workTime.value = 15; restTime.value = 10; rounds.value = 4; prepare.value = 3
-        state.exercises = ['Agachamento','Prancha','Polichinelo','Ponte de Glúteo']
-        syncFromInputs(); syncToDisplay(); renderExercises()
-    })
-
-    // sound toggle
-    soundToggle.addEventListener('click', ()=>{
-        state.sound = !state.sound
-        soundToggle.textContent = 'Som: ' + (state.sound ? 'ON' : 'OFF')
-    })
-
-    // interactions
-    addExerciseBtn.addEventListener('click', ()=>{
-        const v = newExercise.value.trim()
-        if(!v) return
-        state.exercises.push(v)
-        newExercise.value = ''
-        renderExercises()
-    })
-
-    exercisesList.addEventListener('click', (e)=>{
-        if(e.target.dataset.del){
-            const i = parseInt(e.target.dataset.del,10)
-            state.exercises.splice(i,1)
-            renderExercises()
-        }
-    })
-
-    exercisesList.addEventListener('input', (e)=>{
-        if(e.target.dataset.i){
-            const i = parseInt(e.target.dataset.i,10)
-            state.exercises[i] = e.target.value
-        }
-    })
-
-    savePresetBtn.addEventListener('click', ()=>{
-        syncFromInputs()
-        savePreset()
-        renderPresets()
-        alert('Preset salvo localmente')
-    })
-
-    loadDefaultBtn.addEventListener('click', ()=>{
-        loadDefault()
-    })
-
-    exportBtn.addEventListener('click', ()=>{
-        syncFromInputs()
-        exportPreset()
-    })
-
-    importBtn.addEventListener('click', ()=> fileInput.click())
-    fileInput.addEventListener('change', (e)=>{
-        const f = e.target.files[0]
-        if(f) importFile(f)
-        fileInput.value = ''
-    })
-
-    startPauseBtn.addEventListener('click', ()=>{
-        if(state.running) pause(); else start()
-    })
-    resetBtn.addEventListener('click', ()=> reset(false))
-
-    // wire inputs to state live
-    $('#workTime').addEventListener('change', ()=>{ syncFromInputs(); syncToDisplay() })
-    $('#restTime').addEventListener('change', ()=>{ syncFromInputs(); syncToDisplay() })
-    $('#rounds').addEventListener('change', ()=>{ syncFromInputs(); syncToDisplay() })
-    $('#prepare').addEventListener('change', ()=>{ syncFromInputs(); syncToDisplay() })
-    protocolName.addEventListener('input', ()=>{ syncFromInputs(); syncToDisplay() })
-
-    // bootstrap
-    loadDefault(); renderPresets(); updateUI();
-
-    // expose a tiny analytics hook to suggest CTA at end of session
-    function onFinishShowCTA(){
-        // simple visual hint — you can expand to show modal / link
-        setTimeout(()=>{
-            alert('Treino concluído! Quer treinos prontos e planilhas inteligentes? Confira o RunVision.')
-        }, 400)
-    }
-
-    // hook into finish beep
-    const originalTick = tick
-    // override to call CTA
-    const _tick = tick
-    // we already call beep on finish; add CTA when finished
-    // simplified: watch state.running change
-    const obs = new MutationObserver(()=>{})
-
-    // observer - not necessary; poll state to show CTA
-    let lastFinished = false
-    setInterval(()=>{
-        if(state.phase === 'finished' && !lastFinished){ lastFinished = true; onFinishShowCTA() }
-        if(state.phase !== 'finished') lastFinished = false
-    },500)
-
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
