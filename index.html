@@ -1,121 +1,146 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RunVision Tabata</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+    <title>RunVision Tabata PRO</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#051328">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <div class="app">
+<div class="app">
+    <!-- LEFT: editor -->
+    <aside class="panel left-panel" id="editor">
+        <header>
+            <h1>RunVision Tabata — PRO</h1>
+            <p>Crie, personalize e entregue treinos Tabata.</p>
+        </header>
 
-    <!-- PAINEL ESQUERDO -->
-    <div class="panel">
-      <header>
-        <h1>RunVision Tabata — Criador</h1>
-        <p>Monte seu protocolo Tabata e treine em casa sem equipamentos.</p>
-      </header>
+        <div class="controls">
+            <label>Nome do protocolo</label>
+            <label for="protocolName"></label><input id="protocolName" type="text" value="Tabata PRO - Full Body">
 
-      <div class="controls">
+            <div class="row">
+                <div>
+                    <label>Tempo Trabalho (s)</label>
+                    <label for="workTime"></label><input id="workTime" type="number" min="5" value="20">
+                </div>
+                <div>
+                    <label>Descanso (s)</label>
+                    <label for="restTime"></label><input id="restTime" type="number" min="5" value="10">
+                </div>
+            </div>
 
-        <div>
-          <label>Nome do protocolo</label>
-          <input id="protocolName" type="text" value="Tabata 4 min - Full Body">
+            <div class="row">
+                <div>
+                    <label>Rounds</label>
+                    <label for="rounds"></label><input id="rounds" type="number" min="1" value="8">
+                </div>
+                <div>
+                    <label>Preparo (s)</label>
+                    <label for="prepare"></label><input id="prepare" type="number" min="0" value="5">
+                </div>
+            </div>
+
+            <label>Exercícios (texto — opcional: |URL-da-imagem-ou-video)</label>
+            <div id="exercisesList" class="exercises"></div>
+
+            <div class="add-row">
+                <label for="newExercise"></label><input id="newExercise" placeholder="Ex: Burpee | https://.../burpee.jpg">
+                <button class="btn" id="addExerciseBtn">Adicionar</button>
+            </div>
+
+            <div class="row actions">
+                <button class="btn" id="savePreset">Salvar</button>
+                <button class="btn ghost" id="loadDefault">Default</button>
+                <button class="btn ghost" id="exportBtn">Exportar</button>
+                <button class="btn ghost" id="importBtn">Importar</button>
+                <input id="fileInput" type="file" accept="application/json" hidden>
+            </div>
+
+            <label>Presets</label>
+            <div id="presetsContainer" class="presets"></div>
+
+            <div class="small-controls">
+                <label class="toggle-row"><input type="checkbox" id="vibrateToggle" checked> Vibração nos últimos 5s</label>
+                <label class="toggle-row"><input type="checkbox" id="voiceToggle" checked> Voz (pt-BR)</label>
+                <label class="toggle-row"><input type="checkbox" id="soundToggle" checked> Som</label>
+                <label class="toggle-row"><input type="checkbox" id="contrastToggle"> Alto Contraste</label>
+            </div>
+
+            <footer>
+                <small>PWA pronto — instale no celular. LocalStorage salva presets.</small>
+            </footer>
+        </div>
+    </aside>
+
+    <!-- RIGHT: timer / player -->
+    <main class="panel player-panel">
+        <div class="player-header">
+            <div>
+                <strong id="displayName">Tabata PRO - Full Body</strong>
+                <div class="meta">Rounds: <span id="displayRounds">8</span> • Work: <span id="displayWork">20s</span> • Rest: <span id="displayRest">10s</span></div>
+            </div>
+
+            <div class="player-controls">
+                <button id="fullscreenBtn" class="btn ghost">Fullscreen</button>
+                <button id="startPause" class="btn">Start</button>
+                <button id="resetBtn" class="btn ghost">Reset</button>
+            </div>
         </div>
 
-        <div class="row">
-          <div>
-            <label>Tempo de trabalho (seg)</label>
-            <input id="workTime" type="number" value="20" min="5">
-          </div>
-          <div>
-            <label>Descanso (seg)</label>
-            <input id="restTime" type="number" value="10" min="5">
-          </div>
+        <section class="ring-wrap">
+            <div id="ring" class="ring" role="region" aria-live="polite">
+                <div class="ring-inner">
+                    <div id="timeLeft" class="time">0:20</div>
+                    <div id="phaseLabel" class="phase">PREPARE</div>
+                    <div class="exercise-row">
+                        <div id="currentExercise" class="exercise-name">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="media-preview" id="mediaPreview" aria-hidden="true">
+                <!-- images/videos por exercício -->
+            </div>
+        </section>
+
+        <div class="progress">
+            <div class="bar" id="progressBar"></div>
         </div>
 
-        <div class="row">
-          <div>
-            <label>Rounds</label>
-            <input id="rounds" type="number" value="8" min="1">
-          </div>
-          <div>
-            <label>Prepare (seg)</label>
-            <input id="prepare" type="number" value="5" min="0">
-          </div>
+        <div class="rounds-row">
+            <div>Round <span id="curRound">0</span>/<span id="totalRound">8</span></div>
+            <div id="totalTimeLeft">Total: 0:00</div>
         </div>
 
-        <div>
-          <label>Exercícios (um por linha)</label>
-          <div class="exercises" id="exercisesList"></div>
-
-          <div class="add-row">
-            <input id="newExercise" type="text" placeholder="Ex: Burpee">
-            <button id="addExerciseBtn" class="btn">Adicionar</button>
-          </div>
+        <div class="quick-row">
+            <button id="quickTabata" class="btn">Tabata Clássico</button>
+            <button id="quickTabataShort" class="btn ghost">Tabata Curto</button>
+            <button id="shareBtn" class="btn ghost">Compartilhar Preset</button>
         </div>
+    </main>
+</div>
 
-        <div class="actions">
-          <button id="savePreset" class="btn">Salvar Preset</button>
-          <button id="loadDefault" class="btn ghost">Carregar Default</button>
-
-          <button id="exportBtn" class="btn ghost">Exportar</button>
-          <button id="importBtn" class="btn ghost">Importar</button>
-          <input id="fileInput" type="file" accept="application/json" hidden>
-        </div>
-
-        <div>
-          <label>Presets</label>
-          <div id="presetsContainer" class="presets"></div>
-        </div>
-      </div>
+<!-- CTA modal (aparece no final) -->
+<div id="ctaModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+        <button id="closeModal" class="modal-close">✕</button>
+        <h2>Treino concluído!</h2>
+        <p>Quer ter treinos prontos, planilhas inteligentes e o eBook de treinos híbridos?</p>
+        <div class="coupon" id="couponBlock">Cupom: <strong id="couponCode">RUNVISION10</strong> • <span id="couponTimer">00:30</span></div>
+        <a id="ctaButton" class="btn" href="#" target="_blank" rel="noopener">Quero o RunVision</a>
+        <button id="ctaShare" class="btn ghost">Enviar link por WhatsApp</button>
     </div>
+</div>
 
-    <!-- PAINEL DIREITO -->
-    <div class="panel timer-wrap">
-      <div class="header-right">
-        <div>
-          <strong id="displayName">Tabata 4 min - Full Body</strong>
-          <div class="mini-info">
-            Rounds: <span id="displayRounds">8</span> •
-            Work: <span id="displayWork">20s</span> •
-            Rest: <span id="displayRest">10s</span>
-          </div>
-        </div>
-
-        <div class="controls-footer">
-          <button id="startPause" class="btn ghost">Start</button>
-          <button id="resetBtn" class="btn">Reset</button>
-        </div>
-      </div>
-
-      <div class="ring" id="ring">
-        <div class="info">
-          <div class="time" id="timeLeft">0:20</div>
-          <div class="phase" id="phaseLabel">PREPARE</div>
-          <div class="exercise-label">Exercício: <span id="currentExercise">-</span></div>
-        </div>
-      </div>
-
-      <div class="progress">
-        <div class="bar" id="progressBar"></div>
-      </div>
-
-      <div class="round-info">
-        <div>Round <span id="curRound">0</span>/<span id="totalRound">8</span></div>
-        <div id="totalTimeLeft">Total: 0:00</div>
-      </div>
-
-      <div class="quick-buttons">
-        <button id="quickTabata" class="btn">Tabata Clássico</button>
-        <button id="quickTabataShort" class="btn ghost">Tabata Curto</button>
-        <button id="soundToggle" class="btn ghost">Som: ON</button>
-      </div>
-    </div>
-
-  </div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
+<script>
+    // registra service worker se disponível
+    if('serviceWorker' in navigator){
+        navigator.serviceWorker.register('sw.js').catch(()=>{/*silent*/});
+    }
+</script>
 </body>
 </html>
