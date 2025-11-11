@@ -1,10 +1,7 @@
-Copyright (c) 2025 Mario Farias
+## Direitos Autorais
 
-Todos os direitos reservados.
+RunVision Tabata PRO © 2025  
+Criado por **Mario Farias**
 
-Este software é propriedade exclusiva de Mario Farias (RunVision).
-Nenhuma parte deste código, design, interface, arquivos associados ou lógica
-pode ser copiada, modificada, redistribuída, publicada ou usada
-para fins pessoais ou comerciais sem autorização expressa e por escrito.
-
-O uso não autorizado deste sistema, total ou parcial, resultará em medidas legais.
+Este software é proprietário.  
+Proibida cópia, reutilização ou venda sem autorização.
