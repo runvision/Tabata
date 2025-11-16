@@ -4,13 +4,15 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
     <title>RunVision Tabata PRO</title>
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#051328">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <div class="app">
-    <!-- LEFT: editor -->
+
+    <!-- LEFT PANEL -->
     <aside class="panel left-panel" id="editor">
         <header>
             <h1>RunVision Tabata — PRO</h1>
@@ -18,6 +20,7 @@
         </header>
 
         <div class="controls">
+
             <label>Nome do protocolo</label>
             <label for="protocolName"></label><input id="protocolName" type="text" value="Tabata PRO - Full Body">
 
@@ -26,6 +29,7 @@
                     <label>Tempo Trabalho (s)</label>
                     <label for="workTime"></label><input id="workTime" type="number" min="5" value="20">
                 </div>
+
                 <div>
                     <label>Descanso (s)</label>
                     <label for="restTime"></label><input id="restTime" type="number" min="5" value="10">
@@ -43,7 +47,7 @@
                 </div>
             </div>
 
-            <label>Exercícios (texto — opcional: |URL-da-imagem-ou-video)</label>
+            <label>Exercícios (texto — opcional: |URL-da-imagem)</label>
             <div id="exercisesList" class="exercises"></div>
 
             <div class="add-row">
@@ -72,11 +76,13 @@
             <footer>
                 <small>PWA pronto — instale no celular. LocalStorage salva presets.</small>
             </footer>
+
         </div>
     </aside>
 
-    <!-- RIGHT: timer / player -->
+    <!-- RIGHT PANEL -->
     <main class="panel player-panel">
+
         <div class="player-header">
             <div>
                 <strong id="displayName">Tabata PRO - Full Body</strong>
@@ -101,9 +107,7 @@
                 </div>
             </div>
 
-            <div class="media-preview" id="mediaPreview" aria-hidden="true">
-                <!-- images/videos por exercício -->
-            </div>
+            <div class="media-preview" id="mediaPreview" aria-hidden="true"></div>
         </section>
 
         <div class="progress">
@@ -115,47 +119,128 @@
             <div id="totalTimeLeft">Total: 0:00</div>
         </div>
 
-        <div class="quick-row">
-            <button id="quickTabata" class="btn">Tabata Clássico</button>
-            <button id="quickTabataShort" class="btn ghost">Tabata Curto</button>
-            <button id="shareBtn" class="btn ghost">Compartilhar Preset</button>
+        <!-- OBJETIVOS / ABAS -->
+        <div class="objective-tabs">
+            <button class="obj-btn active" data-target="inicianteList">Iniciante</button>
+            <button class="obj-btn" data-target="intermediarioList">Intermediário</button>
+            <button class="obj-btn" data-target="avancadoList">Avançado</button>
         </div>
-    </main>
-</div>
-    
-<!-- PESO TRACKER -->
-<div class="weight-box">
-    <h3>Acompanhamento de Peso</h3>
 
-    <label>Peso inicial (kg)</label>
-    <input id="pesoInicial" type="number" placeholder="Ex: 75">
+        <!-- TABELAS DE TREINOS -->
+        <div class="objective-container">
 
-    <label>Peso atual (kg)</label>
-    <input id="pesoAtual" type="number" placeholder="Ex: 73">
+            <!-- INICIANTE -->
+            <div id="inicianteList" class="objective-list show">
+                <button class="obj-item" data-preset="iniciante1">Full Body Leve</button>
+                <button class="obj-item" data-preset="iniciante2">Pernas & Glúteos</button>
+                <button class="obj-item" data-preset="iniciante3">Core & Abs Leve</button>
+                <button class="obj-item" data-preset="iniciante4">Mobilidade + HIIT Leve</button>
+                <button class="obj-item" data-preset="iniciante5">Cardio Baixa Intensidade</button>
+                <button class="obj-item" data-preset="iniciante6">Braços & Ombros Leve</button>
+                <button class="obj-item" data-preset="iniciante7">Treino 7 Minutos</button>
+                <button class="obj-item" data-preset="iniciante8">ABS 4 minutos</button>
+                <button class="obj-item" data-preset="iniciante9">HIIT Leve Sem Impacto</button>
+                <button class="obj-item" data-preset="iniciante10">Posterior & Glúteos</button>
+            </div>
 
-    <button class="btn" id="salvarPeso">Salvar Peso</button>
+            <!-- INTERMEDIÁRIO -->
+            <div id="intermediarioList" class="objective-list">
+                <button class="obj-item" data-preset="inter1">Full Body Médio</button>
+                <button class="obj-item" data-preset="inter2">Pernas Explosivas</button>
+                <button class="obj-item" data-preset="inter3">ABS Intenso</button>
+                <button class="obj-item" data-preset="inter4">HIIT 12 Minutos</button>
+                <button class="obj-item" data-preset="inter5">Cardio Médio</button>
+                <button class="obj-item" data-preset="inter6">Glúteo + Core</button>
+                <button class="obj-item" data-preset="inter7">Treino Militar Médio</button>
+                <button class="obj-item" data-preset="inter8">HIIT Pirâmide Média</button>
+                <button class="obj-item" data-preset="inter9">Braços & Core Médio</button>
+                <button class="obj-item" data-preset="inter10">Full Body Combinado</button>
+            </div>
 
-    <p id="resultadoPeso" class="peso-resultado"></p>
-</div>
+            <!-- AVANÇADO -->
+            <div id="avancadoList" class="objective-list">
+                <button class="obj-item" data-preset="avan1">Full Body Avançado</button>
+                <button class="obj-item" data-preset="avan2">HIIT Brutal 15 Min</button>
+                <button class="obj-item" data-preset="avan3">ABS Infernal</button>
+                <button class="obj-item" data-preset="avan4">Pernas Explosivas PRO</button>
+                <button class="obj-item" data-preset="avan5">Cardio Hard</button>
+                <button class="obj-item" data-preset="avan6">Treino Militar Pesado</button>
+                <button class="obj-item" data-preset="avan7">Tabata Avançado 20/10</button>
+                <button class="obj-item" data-preset="avan8">Full Body Sprint</button>
+                <button class="obj-item" data-preset="avan9">Core Avançado</button>
+                <button class="obj-item" data-preset="avan10">Explosão Total PRO</button>
+            </div>
 
-<!-- CTA modal (aparece no final) -->
-<div id="ctaModal" class="modal" aria-hidden="true">
-    <div class="modal-card">
-        <button id="closeModal" class="modal-close">✕</button>
-        <h2>Treino concluído!</h2>
-        <p>Quer ter treinos prontos, planilhas inteligentes e o eBook de treinos híbridos?</p>
-        <div class="coupon" id="couponBlock">Cupom: <strong id="couponCode">RUNVISION10</strong> • <span id="couponTimer">00:30</span></div>
-        <a id="ctaButton" class="btn" href="#" target="_blank" rel="noopener">Quero o RunVision</a>
-        <button id="ctaShare" class="btn ghost">Enviar link por WhatsApp</button>
+        </div><!-- objective-container -->
+
+        <!-- BOTÃO MEU PROGRESSO (abre página inteira) -->
+        <button id="openProgress" class="btn ghost" style="margin-top:18px;">Meu Progresso</button>
+
+    </main> <!-- FECHAMENTO CORRETO DO MAIN -->
+
+</div><!-- app -->
+
+<!-- PROGRESS PAGE (Opção C: página inteira separada) -->
+<div id="progressPage" class="progress-page" aria-hidden="true">
+    <div class="progress-page-inner panel">
+        <header>
+            <h2>Meu Progresso</h2>
+            <p>Acompanhe seu peso, metas e conquistas.</p>
+        </header>
+
+        <button id="closeProgress" class="btn ghost" style="margin-bottom:12px;">Voltar</button>
+
+        <div class="progress-columns">
+
+            <div class="progress-left">
+                <div class="stat-card">
+                    <div class="stat-title">Peso Inicial</div>
+                    <label for="pesoInicial"></label><input id="pesoInicial" type="number" placeholder="Ex: 85" style="width:100%;margin-top:6px;">
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">Peso Atual</div>
+                    <label for="pesoAtual"></label><input id="pesoAtual" type="number" placeholder="Ex: 82" style="width:100%;margin-top:6px;">
+                </div>
+
+                <div class="stat-card">
+                    <button id="salvarPesoBtn" class="btn" style="width:100%;">Salvar Peso</button>
+                    <div id="resultadoPeso" style="margin-top:6px;color:var(--muted);font-size:14px;">Nenhum registro ainda</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">Meta Semanal</div>
+                    <label for="metaSemanal"></label><input id="metaSemanal" type="number" placeholder="Ex: 3 treinos/semana" style="width:100%;margin-top:6px;">
+                    <div id="metaStatus" style="margin-top:6px;font-size:14px;color:#fff;"></div>
+                </div>
+            </div>
+
+            <div class="progress-right">
+                <h4>Gráfico de Evolução</h4>
+                <canvas id="graficoPeso" width="600" height="240"></canvas>
+
+                <h4 style="margin-top:14px;">Histórico de Treinos</h4>
+                <div id="historicoTreinos" class="history-box"></div>
+
+                <h4 style="margin-top:14px;">Conquistas</h4>
+                <div id="badgesContainer" class="badges-box"></div>
+            </div>
+
+        </div>
     </div>
 </div>
 
 <script src="script.js"></script>
 <script>
-    // registra service worker se disponível
-    if('serviceWorker' in navigator){
-        navigator.serviceWorker.register('sw.js').catch(()=>{/*silent*/});
+    // registra service worker (silencioso)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(()=>{});
     }
 </script>
+
+<footer class="credit">
+    Desenvolvido por <b>Mario Farias – RunVision</b>
+</footer>
+
 </body>
 </html>
