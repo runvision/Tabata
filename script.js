@@ -407,3 +407,53 @@ init();
 
 
 // Utility: parse "Name | url"
+
+// === PESO TRACKER ===
+
+// carregar valores salvos
+function carregarPeso() {
+    const pInicial = localStorage.getItem("rv_peso_inicial") || "";
+    const pAtual = localStorage.getItem("rv_peso_atual") || "";
+
+    document.getElementById("pesoInicial").value = pInicial;
+    document.getElementById("pesoAtual").value = pAtual;
+
+    calcularDiferenca();
+}
+
+function salvarPeso() {
+    const pInicial = document.getElementById("pesoInicial").value;
+    const pAtual = document.getElementById("pesoAtual").value;
+
+    localStorage.setItem("rv_peso_inicial", pInicial);
+    localStorage.setItem("rv_peso_atual", pAtual);
+
+    calcularDiferenca();
+}
+
+function calcularDiferenca() {
+    const pInicial = parseFloat(localStorage.getItem("rv_peso_inicial"));
+    const pAtual = parseFloat(localStorage.getItem("rv_peso_atual"));
+
+    const out = document.getElementById("resultadoPeso");
+
+    if (!isNaN(pInicial) && !isNaN(pAtual)) {
+        const diff = (pInicial - pAtual).toFixed(1);
+        if (diff > 0) {
+            out.textContent = `🔥 Progresso: você já perdeu ${diff} kg!`;
+        } else if (diff < 0) {
+            out.textContent = `📈 Você ganhou ${Math.abs(diff)} kg`;
+        } else {
+            out.textContent = `Peso estável`;
+        }
+    } else {
+        out.textContent = "";
+    }
+}
+
+// evento do botão
+document.getElementById("salvarPeso").addEventListener("click", salvarPeso);
+
+// carregar ao iniciar
+carregarPeso();
+
